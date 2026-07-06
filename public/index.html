@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot-Verifizierung mit CAPTCHA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="verification-box">
+            <h1>🔐 Bot-Verifizierung</h1>
+            <p>Bitte klicke auf den Button, um zu verifizieren, dass du kein Bot bist.</p>
+            
+            <div class="button-container">
+                <button id="verifyBtn" class="verify-button">Verifizieren</button>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Verifizierung wird durchgeführt...</p>
+            </div>
+            
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+
+        <div id="statsBox" class="stats-box" style="display: none;">
+            <h2>📊 Erfasste Daten</h2>
+            <div id="statsContent"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
