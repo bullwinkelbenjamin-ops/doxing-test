@@ -186,6 +186,12 @@
             border: 2px solid #c3e6cb;
         }
 
+        .result.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
         .info-section {
             background: #f8f9fa;
             padding: 20px;
@@ -232,30 +238,6 @@
         .info-value.warning {
             color: #ff9800;
             font-weight: 600;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-
-        .badge.safe {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge.warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .badge.danger {
-            background: #f8d7da;
-            color: #721c24;
         }
 
         .code-block {
@@ -410,27 +392,31 @@
                     const data = await response.json();
                     
                     this.userData.network = {
-                        ip: data.ip,
-                        isp: data.org,
-                        country: data.country_name,
-                        country_code: data.country_code,
-                        region: data.region,
-                        city: data.city,
-                        latitude: data.latitude,
-                        longitude: data.longitude,
-                        timezone: data.timezone,
-                        postal: data.postal,
-                        asn: data.asn,
-                        languages: data.languages,
-                        is_vpn: data.is_vpn ? 'JA ⚠️' : 'NEIN ✓',
-                        is_proxy: data.is_proxy ? 'JA ⚠️' : 'NEIN ✓',
-                        is_tor: data.is_tor ? 'JA ⚠️' : 'NEIN ✓',
-                        is_datacenter: data.is_datacenter ? 'JA ⚠️' : 'NEIN ✓',
-                        connection_type: data.connection_type,
-                        currency: data.currency_code
+                        ip: data.ip || 'Unbekannt',
+                        isp: data.org || 'Unbekannt',
+                        country: data.country_name || 'Unbekannt',
+                        country_code: data.country_code || 'Unbekannt',
+                        region: data.region || 'Unbekannt',
+                        city: data.city || 'Unbekannt',
+                        latitude: data.latitude || 0,
+                        longitude: data.longitude || 0,
+                        timezone: data.timezone || 'Unbekannt',
+                        postal: data.postal || 'Unbekannt',
+                        asn: data.asn || 'Unbekannt',
+                        is_vpn: data.is_vpn === true ? 'JA ⚠️' : 'NEIN ✓',
+                        is_proxy: data.is_proxy === true ? 'JA ⚠️' : 'NEIN ✓',
+                        is_tor: data.is_tor === true ? 'JA ⚠️' : 'NEIN ✓',
+                        is_datacenter: data.is_datacenter === true ? 'JA ⚠️' : 'NEIN ✓',
+                        connection_type: data.connection_type || 'Unbekannt',
+                        currency: data.currency_code || 'Unbekannt'
                     };
                 } catch (error) {
-                    this.userData.network = { error: 'API nicht erreichbar' };
+                    console.warn('Network API Fehler:', error);
+                    this.userData.network = { 
+                        error: 'API nicht erreichbar',
+                        ip: 'Unbekannt',
+                        isp: 'Unbekannt'
+                    };
                 }
             }
             
@@ -468,40 +454,49 @@
             }
             
             getDeviceFingerprint() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                ctx.textBaseline = 'top';
-                ctx.font = '14px Arial';
-                ctx.fillText('🔐', 2, 2);
-                const canvasHash = canvas.toDataURL().substring(0, 50);
-                
-                this.userData.device = {
-                    userAgent: navigator.userAgent,
-                    platform: navigator.platform,
-                    hardwareConcurrency: navigator.hardwareConcurrency || 'Unbekannt',
-                    deviceMemory: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'Unbekannt',
-                    maxTouchPoints: navigator.maxTouchPoints,
-                    vendor: navigator.vendor,
-                    language: navigator.language,
-                    languages: navigator.languages.join(', '),
-                    screenWidth: window.screen.width,
-                    screenHeight: window.screen.height,
-                    colorDepth: window.screen.colorDepth + '-bit',
-                    pixelDepth: window.screen.pixelDepth + '-bit',
-                    devicePixelRatio: window.devicePixelRatio,
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    canvasFingerprint: canvasHash,
-                    plugins: this.getPlugins(),
-                    webGL: this.getWebGLInfo()
-                };
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.textBaseline = 'top';
+                    ctx.font = '14px Arial';
+                    ctx.fillText('🔐', 2, 2);
+                    const canvasHash = canvas.toDataURL().substring(0, 50);
+                    
+                    this.userData.device = {
+                        userAgent: navigator.userAgent || 'Unbekannt',
+                        platform: navigator.platform || 'Unbekannt',
+                        hardwareConcurrency: navigator.hardwareConcurrency || 'Unbekannt',
+                        deviceMemory: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'Unbekannt',
+                        maxTouchPoints: navigator.maxTouchPoints || 0,
+                        vendor: navigator.vendor || 'Unbekannt',
+                        language: navigator.language || 'Unbekannt',
+                        languages: navigator.languages ? navigator.languages.join(', ') : navigator.language || 'Unbekannt',
+                        screenWidth: window.screen.width || 0,
+                        screenHeight: window.screen.height || 0,
+                        colorDepth: (window.screen.colorDepth || 0) + '-bit',
+                        pixelDepth: (window.screen.pixelDepth || 0) + '-bit',
+                        devicePixelRatio: window.devicePixelRatio || 1,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unbekannt',
+                        canvasFingerprint: canvasHash,
+                        plugins: this.getPlugins(),
+                        webGL: this.getWebGLInfo()
+                    };
+                } catch (error) {
+                    console.warn('Device Fingerprint Fehler:', error);
+                    this.userData.device = { error: 'Fehler beim Fingerprinting' };
+                }
             }
             
             getPlugins() {
-                const plugins = [];
-                for (let i = 0; i < navigator.plugins.length; i++) {
-                    plugins.push(navigator.plugins[i].name);
+                try {
+                    const plugins = [];
+                    for (let i = 0; i < navigator.plugins.length; i++) {
+                        plugins.push(navigator.plugins[i].name);
+                    }
+                    return plugins.length > 0 ? plugins.join(', ') : 'Keine';
+                } catch (error) {
+                    return 'Unbekannt';
                 }
-                return plugins.length > 0 ? plugins.join(', ') : 'Keine';
             }
             
             getWebGLInfo() {
@@ -512,8 +507,8 @@
                         const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                         if (debugInfo) {
                             return {
-                                vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
-                                renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+                                vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || 'Unbekannt',
+                                renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || 'Unbekannt'
                             };
                         }
                     }
@@ -524,27 +519,32 @@
             }
             
             getBrowserForensics() {
-                this.userData.browser = {
-                    cookieEnabled: navigator.cookieEnabled,
-                    doNotTrack: navigator.doNotTrack,
-                    onLine: navigator.onLine,
-                    connectionType: navigator.connection?.effectiveType || 'Unbekannt',
-                    bandwidth: navigator.connection?.downlink ? navigator.connection.downlink + ' Mbps' : 'Unbekannt',
-                    saveData: navigator.connection?.saveData ? 'JA' : 'NEIN',
-                    localStorage: this.checkLocalStorage(),
-                    sessionStorage: this.checkSessionStorage(),
-                    indexedDB: this.checkIndexedDB(),
-                    serviceWorker: 'serviceWorker' in navigator ? 'JA' : 'NEIN',
-                    notifications: 'Notification' in window ? 'JA' : 'NEIN',
-                    geolocation: 'geolocation' in navigator ? 'JA' : 'NEIN',
-                    vibration: 'vibrate' in navigator ? 'JA' : 'NEIN',
-                    battery: 'getBattery' in navigator ? 'JA' : 'NEIN',
-                    camera: navigator.mediaDevices !== undefined ? 'JA' : 'NEIN',
-                    microphone: navigator.mediaDevices !== undefined ? 'JA' : 'NEIN',
-                    webWorker: typeof(Worker) !== 'undefined' ? 'JA' : 'NEIN',
-                    webSocket: 'WebSocket' in window ? 'JA' : 'NEIN',
-                    webRTC: this.checkWebRTC()
-                };
+                try {
+                    this.userData.browser = {
+                        cookieEnabled: navigator.cookieEnabled || false,
+                        doNotTrack: navigator.doNotTrack || 'Unbekannt',
+                        onLine: navigator.onLine !== undefined ? navigator.onLine : true,
+                        connectionType: navigator.connection?.effectiveType || 'Unbekannt',
+                        bandwidth: navigator.connection?.downlink ? navigator.connection.downlink + ' Mbps' : 'Unbekannt',
+                        saveData: navigator.connection?.saveData ? 'JA' : 'NEIN',
+                        localStorage: this.checkLocalStorage(),
+                        sessionStorage: this.checkSessionStorage(),
+                        indexedDB: this.checkIndexedDB(),
+                        serviceWorker: 'serviceWorker' in navigator ? 'JA' : 'NEIN',
+                        notifications: 'Notification' in window ? 'JA' : 'NEIN',
+                        geolocation: 'geolocation' in navigator ? 'JA' : 'NEIN',
+                        vibration: 'vibrate' in navigator ? 'JA' : 'NEIN',
+                        battery: 'getBattery' in navigator ? 'JA' : 'NEIN',
+                        camera: navigator.mediaDevices !== undefined ? 'JA' : 'NEIN',
+                        microphone: navigator.mediaDevices !== undefined ? 'JA' : 'NEIN',
+                        webWorker: typeof(Worker) !== 'undefined' ? 'JA' : 'NEIN',
+                        webSocket: 'WebSocket' in window ? 'JA' : 'NEIN',
+                        webRTC: this.checkWebRTC()
+                    };
+                } catch (error) {
+                    console.warn('Browser Forensics Fehler:', error);
+                    this.userData.browser = { error: 'Fehler bei Browser-Analyse' };
+                }
             }
             
             checkLocalStorage() {
@@ -577,7 +577,7 @@
                 try {
                     const pc = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({iceServers: []});
                     pc.createDataChannel('');
-                    const offer = pc.createOffer();
+                    pc.createOffer();
                     return 'JA ✓';
                 } catch (e) {
                     return 'NEIN';
@@ -585,25 +585,16 @@
             }
             
             getSecurityAnalysis() {
-                const analysis = {
-                    httpsConnection: location.protocol === 'https:' ? 'JA ✓' : 'NEIN ⚠️',
-                    referrerPolicy: document.referrerPolicy || 'default',
-                    securityHeaders: this.checkSecurityHeaders(),
-                    publicIP: this.userData.network?.ip || 'Unbekannt',
-                    vpnDetected: this.userData.network?.is_vpn || 'Unbekannt',
-                    proxyDetected: this.userData.network?.is_proxy || 'Unbekannt',
-                    torDetected: this.userData.network?.is_tor || 'Unbekannt',
-                    dataCenterIP: this.userData.network?.is_datacenter || 'Unbekannt'
-                };
-                
-                this.userData.security = analysis;
-            }
-            
-            checkSecurityHeaders() {
-                const headers = [];
-                const headerList = ['X-Frame-Options', 'X-Content-Type-Options', 'Content-Security-Policy'];
-                // Hinweis: Wir können nur diese Info von unserem Server bekommen
-                return 'Abhängig vom Server';
+                try {
+                    this.userData.security = {
+                        httpsConnection: location.protocol === 'https:' ? 'JA ✓' : 'NEIN ⚠️',
+                        referrerPolicy: document.referrerPolicy || 'default',
+                        publicIP: this.userData.network?.ip || 'Unbekannt'
+                    };
+                } catch (error) {
+                    console.warn('Security Analysis Fehler:', error);
+                    this.userData.security = { error: 'Fehler bei Sicherheits-Analyse' };
+                }
             }
             
             displayResults() {
@@ -616,15 +607,15 @@
                         <div class="info-section">
                             <div class="info-row">
                                 <div class="info-label">IP-Adresse:</div>
-                                <div class="info-value">${this.userData.network.ip}</div>
+                                <div class="info-value">${this.userData.network.ip || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Internetdienstanbieter:</div>
-                                <div class="info-value">${this.userData.network.isp}</div>
+                                <div class="info-value">${this.userData.network.isp || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">ASN:</div>
-                                <div class="info-value">${this.userData.network.asn}</div>
+                                <div class="info-value">${this.userData.network.asn || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Verbindungstyp:</div>
@@ -632,19 +623,19 @@
                             </div>
                             <div class="info-row">
                                 <div class="info-label">VPN erkannt:</div>
-                                <div class="info-value ${this.userData.network.is_vpn.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_vpn}</div>
+                                <div class="info-value ${this.userData.network.is_vpn?.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_vpn || 'NEIN ✓'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Proxy erkannt:</div>
-                                <div class="info-value ${this.userData.network.is_proxy.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_proxy}</div>
+                                <div class="info-value ${this.userData.network.is_proxy?.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_proxy || 'NEIN ✓'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Tor erkannt:</div>
-                                <div class="info-value ${this.userData.network.is_tor.includes('JA') ? 'danger' : 'positive'}">${this.userData.network.is_tor}</div>
+                                <div class="info-value ${this.userData.network.is_tor?.includes('JA') ? 'danger' : 'positive'}">${this.userData.network.is_tor || 'NEIN ✓'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Rechenzentrum IP:</div>
-                                <div class="info-value ${this.userData.network.is_datacenter.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_datacenter}</div>
+                                <div class="info-value ${this.userData.network.is_datacenter?.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_datacenter || 'NEIN ✓'}</div>
                             </div>
                         </div>
                     `;
@@ -657,7 +648,7 @@
                         <div class="info-section">
                             <div class="info-row">
                                 <div class="info-label">Land:</div>
-                                <div class="info-value">${this.userData.network.country} (${this.userData.network.country_code})</div>
+                                <div class="info-value">${this.userData.network.country || 'Unbekannt'} (${this.userData.network.country_code || '?'})</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Region:</div>
@@ -673,15 +664,15 @@
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Breitengrad:</div>
-                                <div class="info-value">${this.userData.network.latitude.toFixed(4)}</div>
+                                <div class="info-value">${this.userData.network.latitude?.toFixed(4) || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Längengrad:</div>
-                                <div class="info-value">${this.userData.network.longitude.toFixed(4)}</div>
+                                <div class="info-value">${this.userData.network.longitude?.toFixed(4) || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Zeitzone:</div>
-                                <div class="info-value">${this.userData.network.timezone}</div>
+                                <div class="info-value">${this.userData.network.timezone || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Währung:</div>
@@ -694,108 +685,104 @@
                 // GPS-STANDORT
                 if (this.userData.gps && this.userData.gps.latitude) {
                     html += `
-                        <h2>📡 GPS-STANDORT (mit Benutzer-Berechtigung)</h2>
+                        <h2>📡 GPS-STANDORT</h2>
                         <div class="info-section">
                             <div class="info-row">
                                 <div class="info-label">Breitengrad:</div>
-                                <div class="info-value">${this.userData.gps.latitude}</div>
+                                <div class="info-value">${this.userData.gps.latitude || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Längengrad:</div>
-                                <div class="info-value">${this.userData.gps.longitude}</div>
+                                <div class="info-value">${this.userData.gps.longitude || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Genauigkeit:</div>
-                                <div class="info-value">${this.userData.gps.accuracy}</div>
+                                <div class="info-value">${this.userData.gps.accuracy || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Höhe:</div>
-                                <div class="info-value">${this.userData.gps.altitude}</div>
+                                <div class="info-value">${this.userData.gps.altitude || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Geschwindigkeit:</div>
-                                <div class="info-value">${this.userData.gps.speed}</div>
+                                <div class="info-value">${this.userData.gps.speed || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Richtung:</div>
-                                <div class="info-value">${this.userData.gps.heading}</div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">Zeitstempel:</div>
-                                <div class="info-value">${this.userData.gps.timestamp}</div>
+                                <div class="info-value">${this.userData.gps.heading || 'Unbekannt'}</div>
                             </div>
                         </div>
                     `;
                 }
                 
                 // GERÄTE-INFORMATIONEN
-                if (this.userData.device) {
+                if (this.userData.device && !this.userData.device.error) {
                     html += `
                         <h2>📱 GERÄTEINFORMATIONEN</h2>
                         <div class="info-section">
                             <div class="info-row">
                                 <div class="info-label">Betriebssystem:</div>
-                                <div class="info-value">${this.userData.device.platform}</div>
+                                <div class="info-value">${this.userData.device.platform || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">CPU Kerne:</div>
-                                <div class="info-value">${this.userData.device.hardwareConcurrency}</div>
+                                <div class="info-value">${this.userData.device.hardwareConcurrency || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Gerätespeicher (RAM):</div>
-                                <div class="info-value">${this.userData.device.deviceMemory}</div>
+                                <div class="info-value">${this.userData.device.deviceMemory || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Bildschirmauflösung:</div>
-                                <div class="info-value">${this.userData.device.screenWidth} x ${this.userData.device.screenHeight} px</div>
+                                <div class="info-value">${this.userData.device.screenWidth || 0} x ${this.userData.device.screenHeight || 0} px</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Farb-Tiefe:</div>
-                                <div class="info-value">${this.userData.device.colorDepth}</div>
+                                <div class="info-value">${this.userData.device.colorDepth || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">DPI (Pixel-Verhältnis):</div>
-                                <div class="info-value">${this.userData.device.devicePixelRatio}</div>
+                                <div class="info-value">${this.userData.device.devicePixelRatio || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Touch-Punkte:</div>
-                                <div class="info-value">${this.userData.device.maxTouchPoints}</div>
+                                <div class="info-value">${this.userData.device.maxTouchPoints || 0}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Zeitzone:</div>
-                                <div class="info-value">${this.userData.device.timezone}</div>
+                                <div class="info-value">${this.userData.device.timezone || 'Unbekannt'}</div>
                             </div>
                         </div>
                     `;
                 }
                 
                 // BROWSER-INFORMATIONEN
-                if (this.userData.device) {
+                if (this.userData.device && !this.userData.device.error) {
                     html += `
                         <h2>🌐 BROWSER-INFORMATIONEN</h2>
                         <div class="info-section">
                             <div class="info-row">
                                 <div class="info-label">Browser Vendor:</div>
-                                <div class="info-value">${this.userData.device.vendor}</div>
+                                <div class="info-value">${this.userData.device.vendor || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Sprache:</div>
-                                <div class="info-value">${this.userData.device.language}</div>
+                                <div class="info-value">${this.userData.device.language || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Alle Sprachen:</div>
-                                <div class="info-value">${this.userData.device.languages}</div>
+                                <div class="info-value">${this.userData.device.languages || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Browser Plugins:</div>
-                                <div class="info-value">${this.userData.device.plugins}</div>
+                                <div class="info-value">${this.userData.device.plugins || 'Keine'}</div>
                             </div>
                         </div>
                     `;
                 }
                 
                 // BROWSER-FUNKTIONEN
-                if (this.userData.browser) {
+                if (this.userData.browser && !this.userData.browser.error) {
                     html += `
                         <h2>⚙️ BROWSER-FUNKTIONEN</h2>
                         <div class="info-section">
@@ -809,77 +796,77 @@
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Verbindungstyp:</div>
-                                <div class="info-value">${this.userData.browser.connectionType}</div>
+                                <div class="info-value">${this.userData.browser.connectionType || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Bandbreite:</div>
-                                <div class="info-value">${this.userData.browser.bandwidth}</div>
+                                <div class="info-value">${this.userData.browser.bandwidth || 'Unbekannt'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Datensparmodell:</div>
-                                <div class="info-value">${this.userData.browser.saveData}</div>
+                                <div class="info-value">${this.userData.browser.saveData || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">LocalStorage:</div>
-                                <div class="info-value positive">${this.userData.browser.localStorage}</div>
+                                <div class="info-value positive">${this.userData.browser.localStorage || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">SessionStorage:</div>
-                                <div class="info-value positive">${this.userData.browser.sessionStorage}</div>
+                                <div class="info-value positive">${this.userData.browser.sessionStorage || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">IndexedDB:</div>
-                                <div class="info-value positive">${this.userData.browser.indexedDB}</div>
+                                <div class="info-value positive">${this.userData.browser.indexedDB || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Service Worker:</div>
-                                <div class="info-value">${this.userData.browser.serviceWorker}</div>
+                                <div class="info-value">${this.userData.browser.serviceWorker || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Geolocation API:</div>
-                                <div class="info-value">${this.userData.browser.geolocation}</div>
+                                <div class="info-value">${this.userData.browser.geolocation || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Web Worker:</div>
-                                <div class="info-value">${this.userData.browser.webWorker}</div>
+                                <div class="info-value">${this.userData.browser.webWorker || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">WebSocket:</div>
-                                <div class="info-value">${this.userData.browser.webSocket}</div>
+                                <div class="info-value">${this.userData.browser.webSocket || 'NEIN'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">WebRTC:</div>
-                                <div class="info-value">${this.userData.browser.webRTC}</div>
+                                <div class="info-value">${this.userData.browser.webRTC || 'NEIN'}</div>
                             </div>
                         </div>
                     `;
                 }
                 
                 // SICHERHEITS-ANALYSE
-                if (this.userData.security) {
+                if (this.userData.security && !this.userData.security.error) {
                     html += `
                         <h2>🔐 SICHERHEITS-ANALYSE</h2>
                         <div class="info-section">
                             <div class="info-row">
                                 <div class="info-label">HTTPS:</div>
-                                <div class="info-value ${this.userData.security.httpsConnection.includes('JA') ? 'positive' : 'negative'}">${this.userData.security.httpsConnection}</div>
+                                <div class="info-value ${this.userData.security.httpsConnection?.includes('JA') ? 'positive' : 'negative'}">${this.userData.security.httpsConnection || 'UNBEKANNT'}</div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">VPN/Proxy erkannt:</div>
-                                <div class="info-value ${this.userData.network?.is_vpn.includes('JA') || this.userData.network?.is_proxy.includes('JA') ? 'warning' : 'positive'}">
-                                    ${(this.userData.network?.is_vpn.includes('JA') || this.userData.network?.is_proxy.includes('JA')) ? 'JA ⚠️' : 'NEIN ✓'}
+                                <div class="info-value ${this.userData.network?.is_vpn?.includes('JA') || this.userData.network?.is_proxy?.includes('JA') ? 'warning' : 'positive'}">
+                                    ${(this.userData.network?.is_vpn?.includes('JA') || this.userData.network?.is_proxy?.includes('JA')) ? 'JA ⚠️' : 'NEIN ✓'}
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="info-label">Tor erkannt:</div>
-                                <div class="info-value ${this.userData.network?.is_tor.includes('JA') ? 'danger' : 'positive'}">${this.userData.network?.is_tor || 'NEIN ✓'}</div>
+                                <div class="info-value ${this.userData.network?.is_tor?.includes('JA') ? 'danger' : 'positive'}">${this.userData.network?.is_tor || 'NEIN ✓'}</div>
                             </div>
                         </div>
                     `;
                 }
                 
                 // USER AGENT
-                if (this.userData.device) {
+                if (this.userData.device && this.userData.device.userAgent) {
                     html += `
                         <h2>📋 USER AGENT</h2>
                         <div class="code-block">${this.userData.device.userAgent}</div>
@@ -894,7 +881,7 @@
             }
             
             showError(message) {
-                this.result.innerHTML = `<div class="result" style="background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb;">✗ ${message}</div>`;
+                this.result.innerHTML = `<div class="result error">✗ ${message}</div>`;
                 this.result.style.display = 'block';
                 this.loading.style.display = 'none';
                 this.verifyBtn.disabled = false;
