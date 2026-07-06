@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Verifizierungsdaten</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>📊 Verifizierungs-Dashboard</h1>
+                <div class="header-actions">
+                    <div class="token-section">
+                        <input type="password" id="tokenInput" placeholder="Dashboard Token eingeben" class="token-input">
+                        <button id="loginBtn" class="btn-login">Login</button>
+                    </div>
+                    <button id="logoutBtn" class="btn-logout" style="display:none;">Logout</button>
+                    <a href="/" class="btn-back">← Zurück zur Verifizierung</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-box">
+                <h2>🔐 Dashboard Login</h2>
+                <p>Geben Sie den Dashboard-Token ein um die Verifizierungsdaten zu sehen.</p>
+                <input type="password" id="tokenInputModal" placeholder="Token eingeben" class="token-input-modal">
+                <button id="loginBtnModal" class="btn-primary">Login</button>
+                <p class="info-text">Standardtoken: <code>admin123</code> (in .env änderbar)</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Content (Hidden until logged in) -->
+        <div id="dashboardContent" class="dashboard-content" style="display:none;">
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">Gesamt Verifizierungen</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-value" id="legitCount">0</div>
+                    <div class="stat-label">✅ Legitim</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-value" id="suspiciousCount">0</div>
+                    <div class="stat-label">⚠️ Verdächtig</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-value" id="botCount">0</div>
+                    <div class="stat-label">🚫 Bot</div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-value" id="avgScore">0%</div>
+                    <div class="stat-label">Ø Bot-Score</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-bar">
+                <input type="text" id="searchInput" placeholder="Nach IP, Bot-Score suchen..." class="search-input">
+                <button id="refreshBtn" class="btn-refresh">🔄 Aktualisieren</button>
+                <button id="exportBtn" class="btn-export">📥 Exportieren (CSV)</button>
+                <button id="clearAllBtn" class="btn-danger">🗑️ Alle löschen</button>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Zeit</th>
+                            <th>Bot-Score</th>
+                            <th>Status</th>
+                            <th>IP-Adresse</th>
+                            <th>Plattform</th>
+                            <th>Browser</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="loading-row">
+                            <td colspan="7">Laden...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- No Data Message -->
+            <div id="noDataMessage" class="no-data" style="display:none;">
+                <p>Noch keine Verifizierungen vorhanden.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Verifizierungs-Details</h2>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
