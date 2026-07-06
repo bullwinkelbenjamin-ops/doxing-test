@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Bot-Verifizierung</title>
+    <title>Advanced User Intelligence System</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,7 @@
 
         .container {
             width: 100%;
-            max-width: 700px;
+            max-width: 900px;
         }
 
         .verification-box {
@@ -43,6 +43,8 @@
             padding: 30px;
             text-align: left;
             animation: slideIn 0.5s ease-out 0.2s both;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         @keyframes slideIn {
@@ -64,8 +66,10 @@
 
         h2 {
             color: #667eea;
-            margin-bottom: 20px;
-            font-size: 22px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
         }
 
         h3 {
@@ -158,11 +162,6 @@
             font-weight: bold;
         }
 
-        .step.active {
-            color: #667eea;
-            font-weight: 600;
-        }
-
         .step.completed .step-icon {
             background: #4CAF50;
         }
@@ -187,156 +186,76 @@
             border: 2px solid #c3e6cb;
         }
 
-        .result.error {
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            color: #721c24;
-            border: 2px solid #f5c6cb;
-        }
-
-        .result.warning {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
-            color: #856404;
-            border: 2px solid #ffeeba;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .info-item {
+        .info-section {
             background: #f8f9fa;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
+            margin-bottom: 20px;
             border-left: 4px solid #667eea;
         }
 
-        .info-item strong {
-            display: block;
-            color: #667eea;
-            margin-bottom: 5px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-item span {
-            display: block;
-            color: #333;
-            font-size: 14px;
-            word-break: break-all;
-        }
-
-        .stats-grid {
+        .info-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            margin: 0 0 10px 0;
-            opacity: 0.9;
-            color: white;
-        }
-
-        .stat-card .value {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .score-bar {
-            background: #e0e0e0;
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .score-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-            transition: width 0.6s ease-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .score-fill.low {
-            background: linear-gradient(90deg, #f44336 0%, #e91e63 100%);
-        }
-
-        .score-fill.medium {
-            background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
-        }
-
-        .detection-list {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .detection-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 14px;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
             border-bottom: 1px solid #e0e0e0;
         }
 
-        .detection-item:last-child {
+        .info-row:last-child {
             border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
-        .detection-icon {
-            margin-right: 10px;
-            font-size: 16px;
+        .info-label {
+            font-weight: 600;
+            color: #667eea;
         }
 
-        .detection-icon.yes {
+        .info-value {
+            color: #333;
+            word-break: break-all;
+        }
+
+        .info-value.positive {
             color: #4CAF50;
+            font-weight: 600;
         }
 
-        .detection-icon.no {
+        .info-value.negative {
             color: #f44336;
+            font-weight: 600;
         }
 
-        .detection-icon.partial {
+        .info-value.warning {
             color: #ff9800;
+            font-weight: 600;
         }
 
-        .location-info {
-            margin-top: 15px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 8px;
-            border-left: 4px solid #2196F3;
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
         }
 
-        .location-info strong {
-            display: block;
-            color: #0047ab;
-            margin-bottom: 10px;
+        .badge.safe {
+            background: #d4edda;
+            color: #155724;
         }
 
-        .location-info p {
-            margin: 5px 0;
-            color: #0066cc;
-            font-size: 14px;
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.danger {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .code-block {
@@ -347,16 +266,14 @@
             font-size: 12px;
             color: #333;
             word-break: break-all;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
+            font-family: 'Courier New', monospace;
         }
 
         @media (max-width: 600px) {
             .verification-box {
                 padding: 25px;
-            }
-            .stats-box {
-                padding: 20px;
             }
             h1 {
                 font-size: 24px;
@@ -365,9 +282,11 @@
                 padding: 12px 40px;
                 font-size: 14px;
             }
-            .info-grid,
-            .stats-grid {
+            .info-row {
                 grid-template-columns: 1fr;
+            }
+            .info-label {
+                margin-bottom: 5px;
             }
         }
     </style>
@@ -375,36 +294,36 @@
 <body>
     <div class="container">
         <div class="verification-box">
-            <h1>🔐 Advanced Bot-Verifizierung</h1>
-            <p>Umfassende Sicherheitsanalyse - Klick um zu starten</p>
+            <h1>🔍 Advanced User Intelligence</h1>
+            <p>Umfassende Analyse aller verfügbaren Benutzerinformationen</p>
             
             <div class="button-container">
-                <button id="verifyBtn" class="verify-button">🔍 Verifizierung starten</button>
+                <button id="verifyBtn" class="verify-button">📊 Analyse starten</button>
             </div>
             
             <div id="loading" class="loading" style="display: none;">
                 <div class="spinner"></div>
-                <p>Detaillierte Analyse wird durchgeführt...</p>
+                <p>Sammle alle verfügbaren Informationen...</p>
                 <div class="loading-steps">
-                    <div class="step" id="step-behavior">
+                    <div class="step" id="step-1">
                         <div class="step-icon">1</div>
-                        <span>Verhaltensanalyse</span>
+                        <span>Netzwerk-Informationen</span>
                     </div>
-                    <div class="step" id="step-device">
+                    <div class="step" id="step-2">
                         <div class="step-icon">2</div>
-                        <span>Geräte-Fingerprinting</span>
+                        <span>Geolokalisierung</span>
                     </div>
-                    <div class="step" id="step-network">
+                    <div class="step" id="step-3">
                         <div class="step-icon">3</div>
-                        <span>Netzwerk-Analyse</span>
+                        <span>Geräte-Fingerprint</span>
                     </div>
-                    <div class="step" id="step-browser">
+                    <div class="step" id="step-4">
                         <div class="step-icon">4</div>
                         <span>Browser-Forensik</span>
                     </div>
-                    <div class="step" id="step-location">
+                    <div class="step" id="step-5">
                         <div class="step-icon">5</div>
-                        <span>Geo-Lokalisierung</span>
+                        <span>Sicherheits-Analyse</span>
                     </div>
                 </div>
             </div>
@@ -413,13 +332,12 @@
         </div>
 
         <div id="statsBox" class="stats-box" style="display: none;">
-            <h2>📊 Vollständige Analyseergebnisse</h2>
             <div id="statsContent"></div>
         </div>
     </div>
 
     <script>
-        class AdvancedVerification {
+        class AdvancedIntelligence {
             constructor() {
                 this.verifyBtn = document.getElementById('verifyBtn');
                 this.loading = document.getElementById('loading');
@@ -427,166 +345,163 @@
                 this.statsBox = document.getElementById('statsBox');
                 this.statsContent = document.getElementById('statsContent');
                 
-                this.verificationData = {
-                    timestamp: null,
-                    userAgent: navigator.userAgent,
-                    ipAddress: null,
-                    location: null,
-                    isVerified: false,
-                    botScore: 0,
-                    detections: {},
-                    rawData: {}
-                };
-                
+                this.userData = {};
                 this.init();
             }
             
             init() {
-                this.verifyBtn.addEventListener('click', () => this.startVerification());
+                this.verifyBtn.addEventListener('click', () => this.startAnalysis());
             }
             
-            async startVerification() {
+            async startAnalysis() {
                 this.verifyBtn.disabled = true;
                 this.loading.style.display = 'block';
                 this.result.style.display = 'none';
                 this.statsBox.style.display = 'none';
                 
                 try {
-                    this.verificationData.timestamp = new Date().toISOString();
+                    // Schritt 1
+                    this.updateStep(1);
+                    await this.sleep(300);
+                    await this.getNetworkInfo();
                     
-                    // Schritt 1: Verhaltensanalyse
-                    this.updateStep('step-behavior', 'active');
-                    await this.sleep(500);
-                    const behaviorScore = await this.analyzeBehavior();
-                    this.updateStep('step-behavior', 'completed');
+                    // Schritt 2
+                    this.updateStep(2);
+                    await this.sleep(300);
+                    await this.getGeoLocation();
                     
-                    // Schritt 2: Geräte-Fingerprinting
-                    this.updateStep('step-device', 'active');
-                    await this.sleep(500);
-                    this.captureDeviceFingerprint();
-                    this.updateStep('step-device', 'completed');
+                    // Schritt 3
+                    this.updateStep(3);
+                    await this.sleep(300);
+                    this.getDeviceFingerprint();
                     
-                    // Schritt 3: Netzwerk-Analyse
-                    this.updateStep('step-network', 'active');
-                    await this.sleep(500);
-                    await this.analyzeNetwork();
-                    this.updateStep('step-network', 'completed');
+                    // Schritt 4
+                    this.updateStep(4);
+                    await this.sleep(300);
+                    this.getBrowserForensics();
                     
-                    // Schritt 4: Browser-Forensik
-                    this.updateStep('step-browser', 'active');
-                    await this.sleep(500);
-                    this.analyzeBrowserForensics();
-                    this.updateStep('step-browser', 'completed');
+                    // Schritt 5
+                    this.updateStep(5);
+                    await this.sleep(300);
+                    this.getSecurityAnalysis();
                     
-                    // Schritt 5: Geo-Lokalisierung
-                    this.updateStep('step-location', 'active');
-                    await this.sleep(500);
-                    await this.getLocation();
-                    this.updateStep('step-location', 'completed');
-                    
-                    // Berechne finalen Score
-                    this.calculateFinalScore(behaviorScore);
-                    this.showSuccess();
+                    this.displayResults();
                     
                 } catch (error) {
-                    console.error('Verifizierungsfehler:', error);
-                    this.showError('Ein Fehler ist aufgetreten: ' + error.message);
+                    console.error('Fehler:', error);
+                    this.showError('Fehler bei der Analyse: ' + error.message);
                 }
             }
             
-            updateStep(stepId, status) {
-                const step = document.getElementById(stepId);
-                step.classList.remove('active', 'completed');
-                if (status) step.classList.add(status);
+            updateStep(number) {
+                const step = document.getElementById('step-' + number);
+                if (step) {
+                    step.classList.add('completed');
+                }
             }
             
             sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             }
             
-            async analyzeBehavior() {
-                const mouseEvents = [];
-                const clickEvents = [];
-                let touchSupport = false;
-                
-                const trackMouse = (e) => {
-                    mouseEvents.push({
-                        x: e.clientX,
-                        y: e.clientY,
-                        time: Date.now()
-                    });
-                };
-                
-                const trackClick = (e) => {
-                    clickEvents.push({
-                        time: Date.now(),
-                        x: e.clientX,
-                        y: e.clientY
-                    });
-                };
-                
-                document.addEventListener('mousemove', trackMouse);
-                document.addEventListener('click', trackClick);
-                
-                touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-                
-                await this.sleep(1000);
-                
-                document.removeEventListener('mousemove', trackMouse);
-                document.removeEventListener('click', trackClick);
-                
-                this.verificationData.detections.mouseMovement = mouseEvents.length > 5 ? 0.3 : -0.2;
-                this.verificationData.detections.clickBehavior = clickEvents.length > 0 ? 0.2 : -0.1;
-                this.verificationData.detections.touchSupport = touchSupport ? 0.3 : -0.1;
-                
-                this.verificationData.rawData.mouseEvents = mouseEvents.length;
-                this.verificationData.rawData.clickEvents = clickEvents.length;
-                this.verificationData.rawData.touchSupport = touchSupport;
-                
-                const score = (0.3 + 0.2 + (touchSupport ? 0.3 : 0)) / 3;
-                return score;
-            }
-            
-            captureDeviceFingerprint() {
-                const fingerprint = {
-                    screen: {
-                        width: window.screen.width,
-                        height: window.screen.height,
-                        colorDepth: window.screen.colorDepth,
-                        pixelDepth: window.screen.pixelDepth,
-                        devicePixelRatio: window.devicePixelRatio
-                    },
-                    navigator: {
-                        language: navigator.language,
-                        languages: navigator.languages,
-                        platform: navigator.platform,
-                        hardwareConcurrency: navigator.hardwareConcurrency,
-                        deviceMemory: navigator.deviceMemory,
-                        maxTouchPoints: navigator.maxTouchPoints,
-                        vendor: navigator.vendor,
-                        plugins: navigator.plugins.length,
-                        doNotTrack: navigator.doNotTrack
-                    },
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    canvas: this.getCanvasFingerprint(),
-                    webgl: this.getWebGLInfo()
-                };
-                
-                this.verificationData.rawData.fingerprint = fingerprint;
-                this.verificationData.detections.deviceConsistency = 0.4;
-            }
-            
-            getCanvasFingerprint() {
+            async getNetworkInfo() {
                 try {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    ctx.textBaseline = 'top';
-                    ctx.font = '14px Arial';
-                    ctx.fillText('Canvas Test', 2, 2);
-                    return canvas.toDataURL().substring(0, 50) + '...';
-                } catch (e) {
-                    return 'Nicht verfügbar';
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    
+                    this.userData.network = {
+                        ip: data.ip,
+                        isp: data.org,
+                        country: data.country_name,
+                        country_code: data.country_code,
+                        region: data.region,
+                        city: data.city,
+                        latitude: data.latitude,
+                        longitude: data.longitude,
+                        timezone: data.timezone,
+                        postal: data.postal,
+                        asn: data.asn,
+                        languages: data.languages,
+                        is_vpn: data.is_vpn ? 'JA ⚠️' : 'NEIN ✓',
+                        is_proxy: data.is_proxy ? 'JA ⚠️' : 'NEIN ✓',
+                        is_tor: data.is_tor ? 'JA ⚠️' : 'NEIN ✓',
+                        is_datacenter: data.is_datacenter ? 'JA ⚠️' : 'NEIN ✓',
+                        connection_type: data.connection_type,
+                        currency: data.currency_code
+                    };
+                } catch (error) {
+                    this.userData.network = { error: 'API nicht erreichbar' };
                 }
+            }
+            
+            async getGeoLocation() {
+                return new Promise((resolve) => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                this.userData.gps = {
+                                    latitude: position.coords.latitude.toFixed(6),
+                                    longitude: position.coords.longitude.toFixed(6),
+                                    accuracy: Math.round(position.coords.accuracy) + 'm',
+                                    altitude: position.coords.altitude ? Math.round(position.coords.altitude) + 'm' : 'N/A',
+                                    altitudeAccuracy: position.coords.altitudeAccuracy ? Math.round(position.coords.altitudeAccuracy) + 'm' : 'N/A',
+                                    heading: position.coords.heading ? Math.round(position.coords.heading) + '°' : 'N/A',
+                                    speed: position.coords.speed ? Math.round(position.coords.speed * 3.6) + ' km/h' : 'N/A',
+                                    timestamp: new Date(position.timestamp).toLocaleString('de-DE')
+                                };
+                                resolve();
+                            },
+                            (error) => {
+                                this.userData.gps = { 
+                                    status: 'Berechtigung verweigert',
+                                    error: error.message 
+                                };
+                                resolve();
+                            },
+                            { timeout: 5000, enableHighAccuracy: true }
+                        );
+                    } else {
+                        this.userData.gps = { status: 'Nicht unterstützt' };
+                        resolve();
+                    }
+                });
+            }
+            
+            getDeviceFingerprint() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('🔐', 2, 2);
+                const canvasHash = canvas.toDataURL().substring(0, 50);
+                
+                this.userData.device = {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    hardwareConcurrency: navigator.hardwareConcurrency || 'Unbekannt',
+                    deviceMemory: navigator.deviceMemory ? navigator.deviceMemory + 'GB' : 'Unbekannt',
+                    maxTouchPoints: navigator.maxTouchPoints,
+                    vendor: navigator.vendor,
+                    language: navigator.language,
+                    languages: navigator.languages.join(', '),
+                    screenWidth: window.screen.width,
+                    screenHeight: window.screen.height,
+                    colorDepth: window.screen.colorDepth + '-bit',
+                    pixelDepth: window.screen.pixelDepth + '-bit',
+                    devicePixelRatio: window.devicePixelRatio,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    canvasFingerprint: canvasHash,
+                    plugins: this.getPlugins(),
+                    webGL: this.getWebGLInfo()
+                };
+            }
+            
+            getPlugins() {
+                const plugins = [];
+                for (let i = 0; i < navigator.plugins.length; i++) {
+                    plugins.push(navigator.plugins[i].name);
+                }
+                return plugins.length > 0 ? plugins.join(', ') : 'Keine';
             }
             
             getWebGLInfo() {
@@ -595,10 +510,12 @@
                     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
                     if (gl) {
                         const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                        return {
-                            vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
-                            renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
-                        };
+                        if (debugInfo) {
+                            return {
+                                vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
+                                renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+                            };
+                        }
                     }
                     return 'Nicht verfügbar';
                 } catch (e) {
@@ -606,284 +523,378 @@
                 }
             }
             
-            async analyzeNetwork() {
-                try {
-                    const response = await fetch('https://api.ipify.org?format=json');
-                    const data = await response.json();
-                    this.verificationData.ipAddress = data.ip;
-                    this.verificationData.detections.networkDetection = 0.3;
-                } catch (error) {
-                    this.verificationData.ipAddress = 'Nicht verfügbar';
-                    this.verificationData.detections.networkDetection = -0.1;
-                }
-                
-                this.verificationData.rawData.connectionType = navigator.connection?.effectiveType || 'Unbekannt';
-                this.verificationData.rawData.bandwidthEstimate = navigator.connection?.downlink || 'Unbekannt';
-                this.verificationData.rawData.onLine = navigator.onLine;
-            }
-            
-            analyzeBrowserForensics() {
-                const forensics = {
-                    userAgent: navigator.userAgent,
-                    appVersion: navigator.appVersion,
+            getBrowserForensics() {
+                this.userData.browser = {
                     cookieEnabled: navigator.cookieEnabled,
-                    localStorageEnabled: this.isLocalStorageEnabled(),
-                    sessionStorageEnabled: this.isSessionStorageEnabled(),
-                    indexedDBEnabled: this.isIndexedDBEnabled(),
-                    webWorkerSupport: typeof(Worker) !== 'undefined',
-                    serviceWorkerSupport: 'serviceWorker' in navigator,
-                    notificationSupport: 'Notification' in window,
-                    geolocationSupport: 'geolocation' in navigator,
-                    vibrationSupport: 'vibrate' in navigator,
-                    batterySupport: 'getBattery' in navigator,
-                    cameraSupport: navigator.mediaDevices !== undefined
+                    doNotTrack: navigator.doNotTrack,
+                    onLine: navigator.onLine,
+                    connectionType: navigator.connection?.effectiveType || 'Unbekannt',
+                    bandwidth: navigator.connection?.downlink ? navigator.connection.downlink + ' Mbps' : 'Unbekannt',
+                    saveData: navigator.connection?.saveData ? 'JA' : 'NEIN',
+                    localStorage: this.checkLocalStorage(),
+                    sessionStorage: this.checkSessionStorage(),
+                    indexedDB: this.checkIndexedDB(),
+                    serviceWorker: 'serviceWorker' in navigator ? 'JA' : 'NEIN',
+                    notifications: 'Notification' in window ? 'JA' : 'NEIN',
+                    geolocation: 'geolocation' in navigator ? 'JA' : 'NEIN',
+                    vibration: 'vibrate' in navigator ? 'JA' : 'NEIN',
+                    battery: 'getBattery' in navigator ? 'JA' : 'NEIN',
+                    camera: navigator.mediaDevices !== undefined ? 'JA' : 'NEIN',
+                    microphone: navigator.mediaDevices !== undefined ? 'JA' : 'NEIN',
+                    webWorker: typeof(Worker) !== 'undefined' ? 'JA' : 'NEIN',
+                    webSocket: 'WebSocket' in window ? 'JA' : 'NEIN',
+                    webRTC: this.checkWebRTC()
                 };
-                
-                this.verificationData.rawData.forensics = forensics;
-                
-                const supportedFeatures = Object.values(forensics).filter(v => v === true).length;
-                this.verificationData.detections.browserFeatures = (supportedFeatures / Object.keys(forensics).length) * 0.3;
             }
             
-            isLocalStorageEnabled() {
+            checkLocalStorage() {
                 try {
                     const test = '__test__';
                     localStorage.setItem(test, test);
                     localStorage.removeItem(test);
-                    return true;
+                    return 'JA ✓';
                 } catch(e) {
-                    return false;
+                    return 'NEIN';
                 }
             }
             
-            isSessionStorageEnabled() {
+            checkSessionStorage() {
                 try {
                     const test = '__test__';
                     sessionStorage.setItem(test, test);
                     sessionStorage.removeItem(test);
-                    return true;
+                    return 'JA ✓';
                 } catch(e) {
-                    return false;
+                    return 'NEIN';
                 }
             }
             
-            isIndexedDBEnabled() {
-                return !!window.indexedDB;
+            checkIndexedDB() {
+                return !!window.indexedDB ? 'JA ✓' : 'NEIN';
             }
             
-            async getLocation() {
-                return new Promise((resolve) => {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                this.verificationData.location = {
-                                    latitude: position.coords.latitude.toFixed(4),
-                                    longitude: position.coords.longitude.toFixed(4),
-                                    accuracy: Math.round(position.coords.accuracy) + 'm',
-                                    altitude: position.coords.altitude ? Math.round(position.coords.altitude) + 'm' : 'N/A',
-                                    speed: position.coords.speed ? Math.round(position.coords.speed) + ' m/s' : 'N/A',
-                                    heading: position.coords.heading ? Math.round(position.coords.heading) + '°' : 'N/A'
-                                };
-                                this.verificationData.detections.geoLocation = 0.2;
-                                resolve();
-                            },
-                            (error) => {
-                                this.verificationData.location = {
-                                    status: 'Berechtigung verweigert',
-                                    error: error.message
-                                };
-                                this.verificationData.detections.geoLocation = -0.1;
-                                resolve();
-                            },
-                            { timeout: 5000, enableHighAccuracy: true }
-                        );
-                    } else {
-                        this.verificationData.location = {
-                            status: 'Nicht unterstützt',
-                            message: 'Geolocation wird nicht vom Browser unterstützt'
-                        };
-                        this.verificationData.detections.geoLocation = -0.1;
-                        resolve();
-                    }
-                });
+            checkWebRTC() {
+                try {
+                    const pc = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({iceServers: []});
+                    pc.createDataChannel('');
+                    const offer = pc.createOffer();
+                    return 'JA ✓';
+                } catch (e) {
+                    return 'NEIN';
+                }
             }
             
-            calculateFinalScore(behaviorScore) {
-                let factors = [
-                    behaviorScore * 0.2,
-                    (this.verificationData.detections.mouseMovement + 0.2) * 0.15,
-                    (this.verificationData.detections.touchSupport + 0.1) * 0.2,
-                    (this.verificationData.detections.deviceConsistency + 0.1) * 0.15,
-                    (this.verificationData.detections.networkDetection || 0) * 0.1,
-                    (this.verificationData.detections.browserFeatures || 0) * 0.1,
-                    (this.verificationData.detections.geoLocation || 0) * 0.1
-                ];
+            getSecurityAnalysis() {
+                const analysis = {
+                    httpsConnection: location.protocol === 'https:' ? 'JA ✓' : 'NEIN ⚠️',
+                    referrerPolicy: document.referrerPolicy || 'default',
+                    securityHeaders: this.checkSecurityHeaders(),
+                    publicIP: this.userData.network?.ip || 'Unbekannt',
+                    vpnDetected: this.userData.network?.is_vpn || 'Unbekannt',
+                    proxyDetected: this.userData.network?.is_proxy || 'Unbekannt',
+                    torDetected: this.userData.network?.is_tor || 'Unbekannt',
+                    dataCenterIP: this.userData.network?.is_datacenter || 'Unbekannt'
+                };
                 
-                const averageScore = Math.max(0, Math.min(1, factors.reduce((a, b) => a + b, 0)));
-                this.verificationData.botScore = Math.round(averageScore * 100);
-                this.verificationData.isVerified = this.verificationData.botScore > 45;
+                this.userData.security = analysis;
             }
             
-            showSuccess() {
-                const isLikelyBot = this.verificationData.botScore < 50;
-                
-                this.result.innerHTML = `
-                    <div class="result ${this.verificationData.isVerified ? 'success' : 'warning'}">
-                        ${this.verificationData.isVerified ? '✓ Verifizierung erfolgreich!' : '⚠ Verdächtige Aktivität erkannt'}
-                        ${isLikelyBot ? '<br><small>Warnung: Mögliches Bot-Verhalten erkannt</small>' : ''}
-                    </div>
-                `;
-                this.result.style.display = 'block';
-                
-                this.displayStats();
+            checkSecurityHeaders() {
+                const headers = [];
+                const headerList = ['X-Frame-Options', 'X-Content-Type-Options', 'Content-Security-Policy'];
+                // Hinweis: Wir können nur diese Info von unserem Server bekommen
+                return 'Abhängig vom Server';
             }
             
-            displayStats() {
-                const fp = this.verificationData.rawData.fingerprint;
-                const forensics = this.verificationData.rawData.forensics;
+            displayResults() {
+                let html = '';
                 
-                const scoreLevel = this.verificationData.botScore > 70 ? '✅ Legitim' : (this.verificationData.botScore > 45 ? '⚠️ Verdächtig' : '🚫 Wahrscheinlich Bot');
-                
-                let html = `
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Gesamt Bot-Score</h3>
-                            <div class="value">${this.verificationData.botScore}%</div>
-                            <div style="margin-top: 10px;">
-                                <div class="score-bar">
-                                    <div class="score-fill ${this.verificationData.botScore > 70 ? '' : (this.verificationData.botScore > 45 ? 'medium' : 'low')}" style="width: ${this.verificationData.botScore}%">
-                                        ${this.verificationData.botScore}%
-                                    </div>
-                                </div>
-                                <small>${scoreLevel}</small>
+                // NETZWERK-INFORMATIONEN
+                if (this.userData.network && !this.userData.network.error) {
+                    html += `
+                        <h2>🌐 NETZWERKINFORMATIONEN</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">IP-Adresse:</div>
+                                <div class="info-value">${this.userData.network.ip}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Internetdienstanbieter:</div>
+                                <div class="info-value">${this.userData.network.isp}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">ASN:</div>
+                                <div class="info-value">${this.userData.network.asn}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Verbindungstyp:</div>
+                                <div class="info-value">${this.userData.network.connection_type || 'Unbekannt'}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">VPN erkannt:</div>
+                                <div class="info-value ${this.userData.network.is_vpn.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_vpn}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Proxy erkannt:</div>
+                                <div class="info-value ${this.userData.network.is_proxy.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_proxy}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Tor erkannt:</div>
+                                <div class="info-value ${this.userData.network.is_tor.includes('JA') ? 'danger' : 'positive'}">${this.userData.network.is_tor}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Rechenzentrum IP:</div>
+                                <div class="info-value ${this.userData.network.is_datacenter.includes('JA') ? 'warning' : 'positive'}">${this.userData.network.is_datacenter}</div>
                             </div>
                         </div>
-                        
-                        <div class="stat-card">
-                            <h3>Verifizierungsstatus</h3>
-                            <div class="value">${this.verificationData.isVerified ? '✓ PASS' : '✗ FAIL'}</div>
-                        </div>
-                    </div>
-                    
-                    <h3>🔍 Detektionsergebnisse</h3>
-                    <div class="detection-list">
-                        <div class="detection-item">
-                            <span class="detection-icon yes">✓</span>
-                            <span><strong>Mausbewegung erkannt:</strong> ${this.verificationData.rawData.mouseEvents} Ereignisse</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon ${this.verificationData.rawData.touchSupport ? 'yes' : 'no'}">✓</span>
-                            <span><strong>Touch-Support:</strong> ${this.verificationData.rawData.touchSupport ? 'JA' : 'NEIN'}</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon ${this.verificationData.rawData.clickEvents > 0 ? 'yes' : 'no'}">✓</span>
-                            <span><strong>Klicks erkannt:</strong> ${this.verificationData.rawData.clickEvents} Ereignisse</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon yes">✓</span>
-                            <span><strong>IP-Adresse:</strong> ${this.verificationData.ipAddress}</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon yes">✓</span>
-                            <span><strong>Connection Type:</strong> ${this.verificationData.rawData.connectionType}</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon ${this.verificationData.rawData.forensics.cookieEnabled ? 'yes' : 'no'}">✓</span>
-                            <span><strong>Cookies aktiviert:</strong> ${this.verificationData.rawData.forensics.cookieEnabled ? 'JA' : 'NEIN'}</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon ${this.verificationData.rawData.forensics.localStorageEnabled ? 'yes' : 'no'}">✓</span>
-                            <span><strong>LocalStorage:</strong> ${this.verificationData.rawData.forensics.localStorageEnabled ? 'JA' : 'NEIN'}</span>
-                        </div>
-                        <div class="detection-item">
-                            <span class="detection-icon ${this.verificationData.rawData.forensics.serviceWorkerSupport ? 'yes' : 'no'}">✓</span>
-                            <span><strong>Service Worker:</strong> ${this.verificationData.rawData.forensics.serviceWorkerSupport ? 'JA' : 'NEIN'}</span>
-                        </div>
-                    </div>
-                    
-                    <h3>🖥️ Geräte-Informationen</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <strong>Bildschirmauflösung</strong>
-                            <span>${fp.screen.width} x ${fp.screen.height}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Farb-Tiefe</strong>
-                            <span>${fp.screen.colorDepth}-bit</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Plattform</strong>
-                            <span>${fp.navigator.platform}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Sprache</strong>
-                            <span>${fp.navigator.language}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>CPU Kerne</strong>
-                            <span>${fp.navigator.hardwareConcurrency}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Gerätespeicher</strong>
-                            <span>${fp.navigator.deviceMemory}GB</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Zeitzone</strong>
-                            <span>${fp.timezone}</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>Browser Vendor</strong>
-                            <span>${fp.navigator.vendor}</span>
-                        </div>
-                    </div>
-                    
-                    <h3>📍 Standort & Netzwerk</h3>
-                `;
-                
-                if (this.verificationData.location && this.verificationData.location.latitude) {
-                    html += `
-                        <div class="location-info">
-                            <strong>📍 GPS-Standort:</strong>
-                            <p>Breitengrad: <strong>${this.verificationData.location.latitude}</strong></p>
-                            <p>Längengrad: <strong>${this.verificationData.location.longitude}</strong></p>
-                            <p>Genauigkeit: <strong>${this.verificationData.location.accuracy}</strong></p>
-                            <p>Höhe: <strong>${this.verificationData.location.altitude}</strong></p>
-                        </div>
                     `;
-                } else {
+                }
+                
+                // STANDORT-INFORMATIONEN
+                if (this.userData.network && !this.userData.network.error) {
                     html += `
-                        <div class="location-info">
-                            <strong>📍 GPS-Standort:</strong>
-                            <p>${this.verificationData.location?.status || 'Nicht verfügbar'}</p>
+                        <h2>📍 STANDORTINFORMATIONEN</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">Land:</div>
+                                <div class="info-value">${this.userData.network.country} (${this.userData.network.country_code})</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Region:</div>
+                                <div class="info-value">${this.userData.network.region || 'Unbekannt'}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Stadt:</div>
+                                <div class="info-value">${this.userData.network.city || 'Unbekannt'}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Postleitzahl:</div>
+                                <div class="info-value">${this.userData.network.postal || 'Unbekannt'}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Breitengrad:</div>
+                                <div class="info-value">${this.userData.network.latitude.toFixed(4)}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Längengrad:</div>
+                                <div class="info-value">${this.userData.network.longitude.toFixed(4)}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Zeitzone:</div>
+                                <div class="info-value">${this.userData.network.timezone}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Währung:</div>
+                                <div class="info-value">${this.userData.network.currency || 'Unbekannt'}</div>
+                            </div>
                         </div>
                     `;
                 }
                 
-                html += `
-                    <h3>🔐 User Agent & Forensik</h3>
-                    <div class="code-block">
-                        ${this.verificationData.userAgent}
-                    </div>
-                    
-                    <div style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #4CAF50;">
-                        <strong style="color: #2e7d32;">📊 Analyseergebnis:</strong>
-                        <p style="margin-top: 10px; color: #2e7d32;">
-                            Basierend auf ${Object.keys(this.verificationData.detections).length} verschiedenen Analysemethoden wurde ein Bot-Score von <strong>${this.verificationData.botScore}%</strong> berechnet.
-                        </p>
-                    </div>
-                `;
+                // GPS-STANDORT
+                if (this.userData.gps && this.userData.gps.latitude) {
+                    html += `
+                        <h2>📡 GPS-STANDORT (mit Benutzer-Berechtigung)</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">Breitengrad:</div>
+                                <div class="info-value">${this.userData.gps.latitude}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Längengrad:</div>
+                                <div class="info-value">${this.userData.gps.longitude}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Genauigkeit:</div>
+                                <div class="info-value">${this.userData.gps.accuracy}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Höhe:</div>
+                                <div class="info-value">${this.userData.gps.altitude}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Geschwindigkeit:</div>
+                                <div class="info-value">${this.userData.gps.speed}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Richtung:</div>
+                                <div class="info-value">${this.userData.gps.heading}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Zeitstempel:</div>
+                                <div class="info-value">${this.userData.gps.timestamp}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // GERÄTE-INFORMATIONEN
+                if (this.userData.device) {
+                    html += `
+                        <h2>📱 GERÄTEINFORMATIONEN</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">Betriebssystem:</div>
+                                <div class="info-value">${this.userData.device.platform}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">CPU Kerne:</div>
+                                <div class="info-value">${this.userData.device.hardwareConcurrency}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Gerätespeicher (RAM):</div>
+                                <div class="info-value">${this.userData.device.deviceMemory}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Bildschirmauflösung:</div>
+                                <div class="info-value">${this.userData.device.screenWidth} x ${this.userData.device.screenHeight} px</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Farb-Tiefe:</div>
+                                <div class="info-value">${this.userData.device.colorDepth}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">DPI (Pixel-Verhältnis):</div>
+                                <div class="info-value">${this.userData.device.devicePixelRatio}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Touch-Punkte:</div>
+                                <div class="info-value">${this.userData.device.maxTouchPoints}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Zeitzone:</div>
+                                <div class="info-value">${this.userData.device.timezone}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // BROWSER-INFORMATIONEN
+                if (this.userData.device) {
+                    html += `
+                        <h2>🌐 BROWSER-INFORMATIONEN</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">Browser Vendor:</div>
+                                <div class="info-value">${this.userData.device.vendor}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Sprache:</div>
+                                <div class="info-value">${this.userData.device.language}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Alle Sprachen:</div>
+                                <div class="info-value">${this.userData.device.languages}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Browser Plugins:</div>
+                                <div class="info-value">${this.userData.device.plugins}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // BROWSER-FUNKTIONEN
+                if (this.userData.browser) {
+                    html += `
+                        <h2>⚙️ BROWSER-FUNKTIONEN</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">Cookies aktiviert:</div>
+                                <div class="info-value ${this.userData.browser.cookieEnabled ? 'positive' : 'negative'}">${this.userData.browser.cookieEnabled ? 'JA ✓' : 'NEIN'}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Online Status:</div>
+                                <div class="info-value ${this.userData.browser.onLine ? 'positive' : 'negative'}">${this.userData.browser.onLine ? 'ONLINE ✓' : 'OFFLINE'}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Verbindungstyp:</div>
+                                <div class="info-value">${this.userData.browser.connectionType}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Bandbreite:</div>
+                                <div class="info-value">${this.userData.browser.bandwidth}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Datensparmodell:</div>
+                                <div class="info-value">${this.userData.browser.saveData}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">LocalStorage:</div>
+                                <div class="info-value positive">${this.userData.browser.localStorage}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">SessionStorage:</div>
+                                <div class="info-value positive">${this.userData.browser.sessionStorage}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">IndexedDB:</div>
+                                <div class="info-value positive">${this.userData.browser.indexedDB}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Service Worker:</div>
+                                <div class="info-value">${this.userData.browser.serviceWorker}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Geolocation API:</div>
+                                <div class="info-value">${this.userData.browser.geolocation}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Web Worker:</div>
+                                <div class="info-value">${this.userData.browser.webWorker}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">WebSocket:</div>
+                                <div class="info-value">${this.userData.browser.webSocket}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">WebRTC:</div>
+                                <div class="info-value">${this.userData.browser.webRTC}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // SICHERHEITS-ANALYSE
+                if (this.userData.security) {
+                    html += `
+                        <h2>🔐 SICHERHEITS-ANALYSE</h2>
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-label">HTTPS:</div>
+                                <div class="info-value ${this.userData.security.httpsConnection.includes('JA') ? 'positive' : 'negative'}">${this.userData.security.httpsConnection}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">VPN/Proxy erkannt:</div>
+                                <div class="info-value ${this.userData.network?.is_vpn.includes('JA') || this.userData.network?.is_proxy.includes('JA') ? 'warning' : 'positive'}">
+                                    ${(this.userData.network?.is_vpn.includes('JA') || this.userData.network?.is_proxy.includes('JA')) ? 'JA ⚠️' : 'NEIN ✓'}
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Tor erkannt:</div>
+                                <div class="info-value ${this.userData.network?.is_tor.includes('JA') ? 'danger' : 'positive'}">${this.userData.network?.is_tor || 'NEIN ✓'}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // USER AGENT
+                if (this.userData.device) {
+                    html += `
+                        <h2>📋 USER AGENT</h2>
+                        <div class="code-block">${this.userData.device.userAgent}</div>
+                    `;
+                }
                 
                 this.statsContent.innerHTML = html;
                 this.statsBox.style.display = 'block';
                 this.loading.style.display = 'none';
+                this.result.innerHTML = '<div class="result success">✓ Analyse erfolgreich abgeschlossen! Alle verfügbaren Informationen wurden erfasst.</div>';
+                this.result.style.display = 'block';
             }
             
             showError(message) {
-                this.result.innerHTML = `
-                    <div class="result error">
-                        ✗ ${message}
-                    </div>
-                `;
+                this.result.innerHTML = `<div class="result" style="background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb;">✗ ${message}</div>`;
                 this.result.style.display = 'block';
                 this.loading.style.display = 'none';
                 this.verifyBtn.disabled = false;
@@ -891,7 +902,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            new AdvancedVerification();
+            new AdvancedIntelligence();
         });
     </script>
 </body>
