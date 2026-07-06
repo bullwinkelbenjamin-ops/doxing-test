@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot-Verifizierung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .verification-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .stats-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            text-align: left;
+            animation: slideIn 0.5s ease-out 0.2s both;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .button-container {
+            margin: 30px 0;
+        }
+
+        .verify-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .verify-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .verify-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .result.warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            color: #856404;
+            border: 2px solid #ffeeba;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item span {
+            display: block;
+            color: #333;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .score-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+            transition: width 0.6s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .score-fill.low {
+            background: linear-gradient(90deg, #f44336 0%, #e91e63 100%);
+        }
+
+        .score-fill.medium {
+            background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
+        }
+
+        .location-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .location-info strong {
+            display: block;
+            color: #0047ab;
+            margin-bottom: 10px;
+        }
+
+        .location-info p {
+            margin: 5px 0;
+            color: #0066cc;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .verification-box {
+                padding: 25px;
+            }
+            .stats-box {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .verify-button {
+                padding: 12px 40px;
+                font-size: 14px;
+            }
+            .info-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="verification-box">
+            <h1>🔐 Bot-Verifizierung</h1>
+            <p>Bitte klicke auf den Button, um zu verifizieren, dass du kein Bot bist.</p>
+            
+            <div class="button-container">
+                <button id="verifyBtn" class="verify-button">Verifizieren</button>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Verifizierung wird durchgeführt...</p>
+            </div>
+            
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+
+        <div id="statsBox" class="stats-box" style="display: none;">
+            <h2>📊 Erfasste Daten</h2>
+            <div id="statsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        class CaptchaVerification {
+            constructor() {
+                this.verifyBtn = document.getElementById('verifyBtn');
+                this.loading = document.getElementById('loading');
+                this.result = document.getElementById('result');
+                this.statsBox = document.getElementById('statsBox');
+                this.statsContent = document.getElementById('statsContent');
+                
+                this.verificationData = {
+                    timestamp: null,
+                    userAgent: navigator.userAgent,
+                    ipAddress: null,
+                    location: null,
+                    isVerified: false,
+                    botScore: 0,
+                    screenInfo: null,
+                    timezone: null
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.verifyBtn.addEventListener('click', () => this.startVerification());
+            }
+            
+            async startVerification() {
+                this.verifyBtn.disabled = true;
+                this.loading.style.display = 'block';
+                this.result.style.display = 'none';
+                this.statsBox.style.display = 'none';
+                
+                try {
+                    this.verificationData.timestamp = new Date().toISOString();
+                    this.captureDeviceInfo();
+                    this.captureScreenInfo();
+                    this.captureTimezone();
+                    
+                    const behaviorScore = await this.analyzeBehavior();
+                    
+                    await this.getIPAddress();
+                    await this.getLocation();
+                    
+                    this.calculateBotScore(behaviorScore);
+                    this.showSuccess();
+                    
+                } catch (error) {
+                    console.error('Verifizierungsfehler:', error);
+                    this.showError('Ein Fehler ist aufgetreten: ' + error.message);
+                }
+            }
+            
+            captureDeviceInfo() {
+                this.verificationData.screenInfo = {
+                    width: window.screen.width,
+                    height: window.screen.height,
+                    colorDepth: window.screen.colorDepth,
+                    pixelDepth: window.screen.pixelDepth,
+                    devicePixelRatio: window.devicePixelRatio,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    hardwareConcurrency: navigator.hardwareConcurrency || 'Unbekannt',
+                    deviceMemory: navigator.deviceMemory || 'Unbekannt'
+                };
+            }
+            
+            captureScreenInfo() {
+                // Bereits in captureDeviceInfo
+            }
+            
+            captureTimezone() {
+                this.verificationData.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            }
+            
+            async analyzeBehavior() {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const factors = {
+                            mouseMovement: Math.random() * 0.3,
+                            clickTiming: Math.random() * 0.2,
+                            touchSupport: navigator.maxTouchPoints > 0 ? 0.3 : 0,
+                            fonts: Math.random() * 0.2
+                        };
+                        
+                        const score = (factors.mouseMovement + factors.clickTiming + factors.touchSupport + factors.fonts) / 4;
+                        resolve(score);
+                    }, 800);
+                });
+            }
+            
+            async getIPAddress() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    this.verificationData.ipAddress = data.ip;
+                } catch (error) {
+                    this.verificationData.ipAddress = 'Nicht verfügbar';
+                }
+            }
+            
+            async getLocation() {
+                return new Promise((resolve) => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                this.verificationData.location = {
+                                    latitude: position.coords.latitude.toFixed(4),
+                                    longitude: position.coords.longitude.toFixed(4),
+                                    accuracy: Math.round(position.coords.accuracy) + 'm'
+                                };
+                                resolve();
+                            },
+                            (error) => {
+                                this.verificationData.location = {
+                                    status: 'Berechtigung verweigert'
+                                };
+                                resolve();
+                            },
+                            { timeout: 5000 }
+                        );
+                    } else {
+                        this.verificationData.location = {
+                            status: 'Nicht unterstützt'
+                        };
+                        resolve();
+                    }
+                });
+            }
+            
+            calculateBotScore(behaviorScore) {
+                let factors = [behaviorScore];
+                factors.push(navigator.maxTouchPoints > 0 ? 0.8 : 0.3);
+                factors.push(Math.min(navigator.userAgent.length / 200, 1.0));
+                factors.push(navigator.plugins.length > 0 ? 0.7 : 0.4);
+                
+                const averageScore = factors.reduce((a, b) => a + b, 0) / factors.length;
+                this.verificationData.botScore = Math.round(averageScore * 100);
+                this.verificationData.isVerified = this.verificationData.botScore > 50;
+            }
+            
+            showSuccess() {
+                const isLikelyBot = this.verificationData.botScore < 50;
+                
+                this.result.innerHTML = `
+                    <div class="result ${this.verificationData.isVerified ? 'success' : 'warning'}">
+                        ${this.verificationData.isVerified ? '✓ Verifizierung erfolgreich!' : '⚠ Verdächtige Aktivität erkannt'}
+                        ${isLikelyBot ? '<br><small>Warnung: Mögliches Bot-Verhalten erkannt</small>' : ''}
+                    </div>
+                `;
+                this.result.style.display = 'block';
+                
+                this.displayStats();
+            }
+            
+            displayStats() {
+                const locationHTML = this.verificationData.location && this.verificationData.location.latitude
+                    ? `<div class="location-info">
+                        <strong>📍 Standort:</strong>
+                        <p>Breitengrad: <strong>${this.verificationData.location.latitude}</strong></p>
+                        <p>Längengrad: <strong>${this.verificationData.location.longitude}</strong></p>
+                        <p>Genauigkeit: <strong>${this.verificationData.location.accuracy}</strong></p>
+                      </div>`
+                    : `<div class="location-info">
+                        <strong>📍 Standort:</strong>
+                        <p>${this.verificationData.location?.status || 'Nicht verfügbar'}</p>
+                      </div>`;
+                
+                const scoreLevel = this.verificationData.botScore > 70 ? '✅ Legitim' : (this.verificationData.botScore > 40 ? '⚠️ Verdächtig' : '🚫 Wahrscheinlich Bot');
+                
+                this.statsContent.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Bot-Score</h3>
+                            <div class="value">${this.verificationData.botScore}%</div>
+                            <div style="margin-top: 10px;">
+                                <div class="score-bar">
+                                    <div class="score-fill ${this.verificationData.botScore > 70 ? '' : (this.verificationData.botScore > 40 ? 'medium' : 'low')}" style="width: ${this.verificationData.botScore}%">
+                                        ${this.verificationData.botScore}%
+                                    </div>
+                                </div>
+                                <small>${scoreLevel}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Verifizierungsstatus</h3>
+                            <div class="value">${this.verificationData.isVerified ? '✓ PASS' : '✗ FAIL'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-grid" style="margin-top: 20px;">
+                        <div class="info-item">
+                            <strong>🕐 Zeitstempel</strong>
+                            <span>${new Date(this.verificationData.timestamp).toLocaleString('de-DE')}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <strong>🌍 Zeitzone</strong>
+                            <span>${this.verificationData.timezone}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <strong>🌐 IP-Adresse</strong>
+                            <span>${this.verificationData.ipAddress}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <strong>📱 Bildschirmauflösung</strong>
+                            <span>${this.verificationData.screenInfo.width} x ${this.verificationData.screenInfo.height}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <strong>🖥️ Plattform</strong>
+                            <span>${this.verificationData.screenInfo.platform}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <strong>🌐 Sprache</strong>
+                            <span>${this.verificationData.screenInfo.language}</span>
+                        </div>
+                    </div>
+                    
+                    ${locationHTML}
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; font-size: 12px; color: #666;">
+                        <strong>User Agent:</strong><br>
+                        <code style="word-break: break-all; color: #333;">${this.verificationData.userAgent}</code>
+                    </div>
+                `;
+                
+                this.statsBox.style.display = 'block';
+                this.loading.style.display = 'none';
+            }
+            
+            showError(message) {
+                this.result.innerHTML = `
+                    <div class="result error">
+                        ✗ ${message}
+                    </div>
+                `;
+                this.result.style.display = 'block';
+                this.loading.style.display = 'none';
+                this.verifyBtn.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new CaptchaVerification();
+        });
+    </script>
+</body>
+</html>
